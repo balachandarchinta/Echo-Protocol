@@ -1,0 +1,27 @@
+{
+  "functions": {
+    "targets": [
+      "echo-protocol-api"
+    ],
+    "ignore": [
+      ".output"
+    ],
+    "source": "functions"
+  },
+  "client": {
+    "source": "echo-protocol-client",
+    "plugin": "zcatalyst-cli-plugin-react"
+  },
+  "appsail": [
+    {
+      "source": ".",
+      "name": "echo-protocol-app"
+    }
+  ],
+  "slate": [
+    {
+      "name": "echo-protocol-web",
+      "source": "C:\\Users\\balac\\OneDrive\\Desktop\\working file\\Echo-Protocol\\echo-protocol-web"
+    }
+  ]
+}
