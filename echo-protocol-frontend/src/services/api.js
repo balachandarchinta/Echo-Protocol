@@ -117,3 +117,11 @@ export async function getDashboardData() {
     casesByMonth,
   };
 }
+// =====================================================
+// CASE LIST
+// =====================================================
+export function getCases() {
+  return fetchApi(
+    "/crime/list"
+  );
+}

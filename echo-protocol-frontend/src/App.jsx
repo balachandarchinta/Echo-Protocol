@@ -28,8 +28,9 @@ import {
   YAxis,
 } from "recharts";
 
+
 import { getDashboardData } from "./services/api";
-import "./App.css";
+import Cases from "./pages/Cases";
 
 
 const STATUS_COLORS = [
@@ -104,6 +105,9 @@ function ChartCard({
 
 
 function Dashboard() {
+  const [activePage, setActivePage] =
+    useState("dashboard");
+  
   const [dashboardData, setDashboardData] =
     useState(null);
 
@@ -241,15 +245,33 @@ function Dashboard() {
 
         <nav className="navigation">
 
-          <button className="nav-item active">
-            <Activity size={19} />
-            Dashboard
-          </button>
+          <button
+  className={
+    activePage === "dashboard"
+      ? "nav-item active"
+      : "nav-item"
+  }
+  onClick={() =>
+    setActivePage("dashboard")
+  }
+>
+  <Activity size={19} />
+  Dashboard
+</button>
 
-          <button className="nav-item">
-            <ClipboardList size={19} />
-            Cases
-          </button>
+          <button
+  className={
+    activePage === "cases"
+      ? "nav-item active"
+      : "nav-item"
+  }
+  onClick={() =>
+    setActivePage("cases")
+  }
+>
+  <ClipboardList size={19} />
+  Cases
+</button>
 
           <button className="nav-item">
             <Building2 size={19} />
@@ -282,7 +304,10 @@ function Dashboard() {
           MAIN CONTENT
       ========================================== */}
       <main className="main-content">
-
+      {activePage === "cases" ? (
+  <Cases />
+) : (
+  <>
         {/* HEADER */}
         <header className="topbar">
 
@@ -622,9 +647,12 @@ function Dashboard() {
 
 
         <footer className="dashboard-footer">
-          Echo Protocol · Prototype Crime
-          Intelligence Platform
-        </footer>
+  Echo Protocol · Prototype Crime
+  Intelligence Platform
+</footer>
+
+  </>
+)}
 
       </main>
 

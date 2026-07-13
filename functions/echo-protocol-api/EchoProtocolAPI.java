@@ -3497,6 +3497,397 @@ if ("/dashboard/cases-by-month".equals(path)
     return;
 }
 
+            // =====================================================
+// CRIME API - LIST ALL CASES
+//
+// Returns CaseMaster records with both:
+// 1. Foreign-key ROWIDs
+// 2. Human-readable lookup values
+// =====================================================
+if ("/crime/list".equals(path)
+        && "GET".equalsIgnoreCase(method)) {
+
+    LOGGER.info(
+        "Retrieving enriched case list..."
+    );
+
+    ZCObject datastore =
+        ZCObject.getInstance();
+
+    // =================================================
+    // LOAD TABLES
+    // =================================================
+    ZCTable caseTable =
+        datastore.getTable("CaseMaster");
+
+    ZCTable districtTable =
+        datastore.getTable("District");
+
+    ZCTable unitTable =
+        datastore.getTable("Unit");
+
+    ZCTable crimeHeadTable =
+        datastore.getTable("CrimeHead");
+
+    ZCTable crimeSubHeadTable =
+        datastore.getTable("CrimeSubHead");
+
+    ZCTable statusTable =
+        datastore.getTable("CaseStatusMaster");
+
+    ZCTable gravityTable =
+        datastore.getTable("GravityOffence");
+
+
+    // =================================================
+    // VALIDATE TABLE ACCESS
+    // =================================================
+    if (caseTable == null
+            || districtTable == null
+            || unitTable == null
+            || crimeHeadTable == null
+            || crimeSubHeadTable == null
+            || statusTable == null
+            || gravityTable == null) {
+
+        throw new Exception(
+            "Unable to access one or more case lookup tables"
+        );
+    }
+
+
+    // =================================================
+    // BUILD ROWID -> DISPLAY VALUE MAPS
+    // =================================================
+    java.util.Map<String, String> districtMap =
+        buildLookupMap(
+            districtTable,
+            "DistrictName"
+        );
+
+    java.util.Map<String, String> unitMap =
+        buildLookupMap(
+            unitTable,
+            "UnitName"
+        );
+
+    java.util.Map<String, String> crimeHeadMap =
+        buildLookupMap(
+            crimeHeadTable,
+            "CrimeHeadName"
+        );
+
+    java.util.Map<String, String> crimeSubHeadMap =
+        buildLookupMap(
+            crimeSubHeadTable,
+            "CrimeSubHeadName"
+        );
+
+    java.util.Map<String, String> statusMap =
+        buildLookupMap(
+            statusTable,
+            "StatusName"
+        );
+
+    java.util.Map<String, String> gravityMap =
+        buildLookupMap(
+            gravityTable,
+            "GravityName"
+        );
+
+
+    // =================================================
+    // BUILD JSON RESPONSE
+    // =================================================
+    StringBuilder json =
+        new StringBuilder();
+
+    json.append(
+        "{"
+        + "\"success\":true,"
+        + "\"data\":["
+    );
+
+    boolean firstCase = true;
+    int totalCases = 0;
+
+
+    for (ZCRowObject caseRow :
+            caseTable.getAllRows()) {
+
+        if (!firstCase) {
+            json.append(",");
+        }
+
+        firstCase = false;
+        totalCases++;
+
+
+        // =============================================
+        // READ CASE VALUES
+        // =============================================
+        Object rowId =
+            caseRow.get("ROWID");
+
+        Object crimeNo =
+            caseRow.get("CrimeNo");
+
+        Object firNo =
+            caseRow.get("FIRNo");
+
+        Object firDate =
+            caseRow.get("CrimeRegsiteredDate");
+
+        Object districtId =
+            caseRow.get("District");
+
+        Object unitId =
+            caseRow.get("PoliceStation");
+
+        Object crimeHeadId =
+            caseRow.get("CrimeHead");
+
+        Object crimeSubHeadId =
+            caseRow.get("CrimeSubHead");
+
+        Object statusId =
+            caseRow.get("CaseStatus");
+
+        Object gravityId =
+            caseRow.get("GravityOffence");
+
+        Object incidentFromDate =
+            caseRow.get("IncidentFromDate");
+
+
+        // =============================================
+        // CONVERT VALUES TO SAFE STRINGS
+        // =============================================
+        String rowIdValue =
+            valueToString(rowId);
+
+        String crimeNoValue =
+            valueToString(crimeNo);
+
+        String firNoValue =
+            valueToString(firNo);
+
+        String firDateValue =
+            valueToString(firDate);
+
+        String districtIdValue =
+            valueToString(districtId);
+
+        String unitIdValue =
+            valueToString(unitId);
+
+        String crimeHeadIdValue =
+            valueToString(crimeHeadId);
+
+        String crimeSubHeadIdValue =
+            valueToString(crimeSubHeadId);
+
+        String statusIdValue =
+            valueToString(statusId);
+
+        String gravityIdValue =
+            valueToString(gravityId);
+
+        String incidentFromDateValue =
+            valueToString(incidentFromDate);
+
+
+        // =============================================
+        // RESOLVE HUMAN-READABLE VALUES
+        // =============================================
+        String districtName =
+            districtMap.getOrDefault(
+                districtIdValue,
+                "Unknown"
+            );
+
+        String unitName =
+            unitMap.getOrDefault(
+                unitIdValue,
+                "Unknown"
+            );
+
+        String crimeHeadName =
+            crimeHeadMap.getOrDefault(
+                crimeHeadIdValue,
+                "Unknown"
+            );
+
+        String crimeSubHeadName =
+            crimeSubHeadMap.getOrDefault(
+                crimeSubHeadIdValue,
+                "Unknown"
+            );
+
+        String statusName =
+            statusMap.getOrDefault(
+                statusIdValue,
+                "Unknown"
+            );
+
+        String gravityName =
+            gravityMap.getOrDefault(
+                gravityIdValue,
+                "Unknown"
+            );
+
+
+        // =============================================
+        // APPEND CASE JSON
+        // =============================================
+        json.append("{");
+
+        json.append(
+            "\"rowId\":\""
+            + escapeJson(rowIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"crimeNo\":\""
+            + escapeJson(crimeNoValue)
+            + "\","
+        );
+
+        json.append(
+            "\"firNumber\":\""
+            + escapeJson(firNoValue)
+            + "\","
+        );
+
+        json.append(
+            "\"firDate\":\""
+            + escapeJson(firDateValue)
+            + "\","
+        );
+
+
+        // District
+        json.append(
+            "\"districtId\":\""
+            + escapeJson(districtIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"district\":\""
+            + escapeJson(districtName)
+            + "\","
+        );
+
+
+        // Police Station / Unit
+        json.append(
+            "\"unitId\":\""
+            + escapeJson(unitIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"policeStation\":\""
+            + escapeJson(unitName)
+            + "\","
+        );
+
+
+        // Crime Head
+        json.append(
+            "\"crimeHeadId\":\""
+            + escapeJson(crimeHeadIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"crimeHead\":\""
+            + escapeJson(crimeHeadName)
+            + "\","
+        );
+
+
+        // Crime Sub Head
+        json.append(
+            "\"crimeSubHeadId\":\""
+            + escapeJson(crimeSubHeadIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"crimeSubHead\":\""
+            + escapeJson(crimeSubHeadName)
+            + "\","
+        );
+
+
+        // Status
+        json.append(
+            "\"caseStatusId\":\""
+            + escapeJson(statusIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"status\":\""
+            + escapeJson(statusName)
+            + "\","
+        );
+
+
+        // Gravity
+        json.append(
+            "\"offenceGravityId\":\""
+            + escapeJson(gravityIdValue)
+            + "\","
+        );
+
+        json.append(
+            "\"gravity\":\""
+            + escapeJson(gravityName)
+            + "\","
+        );
+
+
+        // Incident date
+        json.append(
+            "\"incidentFromDate\":\""
+            + escapeJson(
+                incidentFromDateValue
+            )
+            + "\""
+        );
+
+        json.append("}");
+    }
+
+
+    // =================================================
+    // COMPLETE RESPONSE
+    // =================================================
+    json.append(
+        "],"
+        + "\"meta\":{"
+        + "\"total\":"
+        + totalCases
+        + "},"
+        + "\"message\":"
+        + "\"Case list retrieved successfully\""
+        + "}"
+    );
+
+    response.setStatus(
+        HttpServletResponse.SC_OK
+    );
+
+    response.getWriter().write(
+        json.toString()
+    );
+
+    return;
+}
 
             // =====================================================
             // 7. 404 - ENDPOINT NOT FOUND
@@ -3546,6 +3937,81 @@ if ("/dashboard/cases-by-month".equals(path)
 
     } // END OF runner()
 
+    // =============================================================
+// JSON STRING ESCAPE HELPER
+// =============================================================
+private String escapeJson(String value) {
+    
+    if (value == null) {
+        return "";
+    }
+
+    return value
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t");
+}
+
+    // =============================================================
+// SAFE OBJECT -> STRING CONVERSION
+// =============================================================
+private String valueToString(
+    Object value
+) {
+
+    if (value == null) {
+        return "";
+    }
+
+    return value
+        .toString()
+        .trim();
+}
+
+
+// =============================================================
+// BUILD LOOKUP MAP
+//
+// Converts:
+// ROWID -> Human-readable display value
+//
+// Examples:
+// District ROWID -> DistrictName
+// Unit ROWID     -> UnitName
+// =============================================================
+private java.util.Map<String, String> buildLookupMap(
+    ZCTable table,
+    String displayColumn
+) throws Exception {
+
+    java.util.Map<String, String> lookupMap =
+        new java.util.LinkedHashMap<String, String>();
+
+    for (ZCRowObject row :
+            table.getAllRows()) {
+
+        Object rowId =
+            row.get("ROWID");
+
+        Object displayValue =
+            row.get(displayColumn);
+
+        if (rowId == null
+                || displayValue == null) {
+
+            continue;
+        }
+
+        lookupMap.put(
+            rowId.toString().trim(),
+            displayValue.toString().trim()
+        );
+    }
+
+    return lookupMap;
+}
 
     // =============================================================
     // HELPER 1:
