@@ -1,0 +1,35 @@
+# ==========================================
+# Catalyst generated files
+# ==========================================
+.build/
+**/.output/
+
+# ==========================================
+# Node / React generated files
+# ==========================================
+**/node_modules/
+**/dist/
+
+# ==========================================
+# Local backup files
+# ==========================================
+*.backup.txt
+*.backup.java
+*.working-backup.txt
+*.before-masters.txt
+*.before-units.java
+
+# ==========================================
+# Environment files
+# ==========================================
+.env
+.env.local
+.env.development.local
+
+# ==========================================
+# IDE / OS
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
