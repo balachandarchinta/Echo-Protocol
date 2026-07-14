@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Activity,
   BadgeCheck,
+  BarChart3,
   Building2,
   CheckCircle2,
   ClipboardList,
@@ -34,6 +35,7 @@ import Cases from "./pages/Cases";
 import CaseDetails from "./pages/CaseDetails";
 import Units from "./pages/Units";
 import UnitDetails from "./pages/UnitDetails";
+import Analytics from "./pages/Analytics";
 
 const STATUS_COLORS = [
   "#2563eb",
@@ -301,6 +303,22 @@ function Dashboard() {
   Units
 </button>
 
+          <button
+  className={
+    activePage === "analytics"
+      ? "nav-item active"
+      : "nav-item"
+  }
+  onClick={() => {
+    setSelectedCaseId(null);
+    setSelectedUnitId(null);
+    setActivePage("analytics");
+  }}
+>
+  <BarChart3 size={19} />
+  Analytics
+</button>
+
         </nav>
 
 
@@ -366,6 +384,10 @@ function Dashboard() {
       setActivePage("unit-details");
     }}
   />
+
+  ) : activePage === "analytics" ? (
+
+  <Analytics />
 
 ) : (
 

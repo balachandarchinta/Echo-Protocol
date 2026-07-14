@@ -1639,3 +1639,453 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   ANALYTICS PAGE
+========================================= */
+
+.analytics-page {
+  width: 100%;
+}
+
+.analytics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+  padding: 24px;
+  border: 1px solid #e2e7ef;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.analytics-header h1 {
+  margin: 5px 0 7px;
+  color: #172033;
+  font-size: 26px;
+}
+
+.analytics-header p:last-child {
+  max-width: 620px;
+  margin: 0;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.analytics-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid #dfe4eb;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #475467;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+/* KPI */
+
+.analytics-kpis {
+  display: grid;
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.analytics-kpis article {
+  padding: 16px;
+  border: 1px solid #e2e7ef;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.analytics-kpis span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8a94a5;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.analytics-kpis strong {
+  color: #253247;
+  font-size: 23px;
+}
+
+
+/* FILTERS */
+
+.analytics-filter-bar {
+  display: grid;
+  grid-template-columns:
+    minmax(280px, 1fr)
+    220px
+    190px;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.analytics-filter-bar select {
+  padding: 0 12px;
+  border: 1px solid #dfe4eb;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475467;
+  font: inherit;
+  font-size: 11px;
+}
+
+
+/* MAIN LAYOUT */
+
+.analytics-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.5fr)
+    minmax(320px, 0.7fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.hotspot-visual-card,
+.priority-zones-card,
+.analytics-table-card {
+  padding: 20px;
+  border: 1px solid #e2e7ef;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.analytics-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.analytics-card-header h2 {
+  margin: 0 0 4px;
+  color: #344054;
+  font-size: 14px;
+}
+
+.analytics-card-header p {
+  margin: 0;
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+
+/* HOTSPOT VISUAL */
+
+.hotspot-visual-area {
+  display: flex;
+  min-height: 320px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  padding: 30px;
+  border: 1px solid #edf0f4;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      rgba(148, 163, 184, 0.06) 1px,
+      transparent 1px
+    );
+  background-size: 30px 30px;
+}
+
+.hotspot-node {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  border: 5px solid;
+  border-radius: 50%;
+  font-size: 11px;
+  transition:
+    transform 0.15s ease;
+}
+
+.hotspot-node:hover {
+  transform: scale(1.08);
+}
+
+.hotspot-node.risk-critical {
+  border-color: #b42318;
+  background: #fee4e2;
+  color: #912018;
+}
+
+.hotspot-node.risk-high {
+  border-color: #dc6803;
+  background: #fef0c7;
+  color: #93370d;
+}
+
+.hotspot-node.risk-moderate {
+  border-color: #b54708;
+  background: #fffaeb;
+  color: #7a2e0e;
+}
+
+.hotspot-node.risk-low {
+  border-color: #027a48;
+  background: #ecfdf3;
+  color: #05603a;
+}
+
+.hotspot-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.hotspot-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #667085;
+  font-size: 10px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-dot.critical {
+  background: #b42318;
+}
+
+.legend-dot.high {
+  background: #dc6803;
+}
+
+.legend-dot.moderate {
+  background: #b54708;
+}
+
+.legend-dot.low {
+  background: #027a48;
+}
+
+
+/* PRIORITY ZONES */
+
+.priority-zone-list {
+  display: grid;
+}
+
+.priority-zone-row {
+  display: grid;
+  grid-template-columns:
+    28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eef1f5;
+}
+
+.priority-zone-row:last-child {
+  border-bottom: 0;
+}
+
+.priority-rank {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border-radius: 7px;
+  background: #f2f4f7;
+  color: #667085;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.priority-zone-info strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #344054;
+  font-size: 10px;
+}
+
+.priority-zone-info span {
+  color: #98a2b3;
+  font-size: 9px;
+}
+
+.priority-zone-count {
+  text-align: right;
+}
+
+.priority-zone-count strong {
+  display: block;
+  color: #344054;
+  font-size: 14px;
+}
+
+.priority-zone-count span {
+  color: #98a2b3;
+  font-size: 8px;
+}
+
+
+/* TABLE */
+
+.analytics-table-wrap {
+  overflow-x: auto;
+}
+
+.analytics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.analytics-table th {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e4e7ec;
+  color: #667085;
+  font-size: 9px;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.analytics-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eef1f5;
+  color: #667085;
+  font-size: 10px;
+}
+
+.analytics-table td strong {
+  color: #344054;
+}
+
+.analytics-risk {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.analytics-risk.risk-critical {
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.analytics-risk.risk-high {
+  background: #fef0c7;
+  color: #b54708;
+}
+
+.analytics-risk.risk-moderate {
+  background: #fffaeb;
+  color: #93370d;
+}
+
+.analytics-risk.risk-low {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .analytics-kpis {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .analytics-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .analytics-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .analytics-kpis {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .analytics-filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-filter-bar select {
+    min-height: 42px;
+  }
+}
+
+/* =========================================
+   CRIME HOTSPOT GEOGRAPHIC MAP
+========================================= */
+
+.hotspot-map-wrapper {
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.hotspot-map {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  z-index: 1;
+}
+
+.hotspot-popup {
+  min-width: 220px;
+}
+
+.hotspot-popup strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.hotspot-popup span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.hotspot-popup hr {
+  margin: 10px 0;
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.hotspot-popup p {
+  margin: 6px 0;
+  font-size: 13px;
+  color: #334155;
+}

@@ -2076,6 +2076,11 @@ if ("/dashboard/kpis".equals(path)
     int closedCases = 0;
     int chargeSheets = 0;
 
+    java.util.List<ZCRowObject>
+    rowsToUpdate =
+        new java.util.ArrayList<
+            ZCRowObject
+        >();
 
     for (ZCRowObject caseRow :
             caseTable.getAllRows()) {
@@ -5410,6 +5415,871 @@ if (path.startsWith("/unit/details/")
     response.getWriter().write(
         json.toString()
     );
+
+    return;
+}
+
+            // =====================================================
+// ANALYTICS API - CRIME HOTSPOTS
+//
+// Endpoint:
+// GET /analytics/hotspots
+//
+// Aggregates cases by:
+// Latitude + Longitude + District + Police Station
+// =====================================================
+if ("/analytics/hotspots".equals(path)
+        && "GET".equalsIgnoreCase(method)) {
+
+    LOGGER.info(
+        "Calculating crime hotspot analytics..."
+    );
+
+    ZCObject datastore =
+        ZCObject.getInstance();
+
+    ZCTable caseTable =
+        datastore.getTable("CaseMaster");
+
+    ZCTable districtTable =
+        datastore.getTable("District");
+
+    ZCTable unitTable =
+        datastore.getTable("Unit");
+
+    ZCTable crimeHeadTable =
+        datastore.getTable("CrimeHead");
+
+    ZCTable gravityTable =
+        datastore.getTable("GravityOffence");
+
+
+    if (caseTable == null
+            || districtTable == null
+            || unitTable == null
+            || crimeHeadTable == null
+            || gravityTable == null) {
+
+        throw new Exception(
+            "Unable to access one or more hotspot analytics tables"
+        );
+    }
+
+
+    // =================================================
+    // LOOKUP MAPS
+    // =================================================
+    java.util.Map<String, String> districtMap =
+        buildLookupMap(
+            districtTable,
+            "DistrictName"
+        );
+
+    java.util.Map<String, String> unitMap =
+        buildLookupMap(
+            unitTable,
+            "UnitName"
+        );
+
+    java.util.Map<String, String> crimeHeadMap =
+        buildLookupMap(
+            crimeHeadTable,
+            "CrimeHeadName"
+        );
+
+    java.util.Map<String, String> gravityMap =
+        buildLookupMap(
+            gravityTable,
+            "GravityName"
+        );
+
+
+    // =================================================
+    // HOTSPOT AGGREGATION
+    // =================================================
+    java.util.Map<
+        String,
+        java.util.Map<String, Object>
+    > hotspotMap =
+        new java.util.LinkedHashMap<
+            String,
+            java.util.Map<String, Object>
+        >();
+
+
+    int totalMappedCases = 0;
+    int unmappedCases = 0;
+
+
+    for (ZCRowObject caseRow :
+            caseTable.getAllRows()) {
+
+
+        String latitude =
+            valueToString(
+                caseRow.get("Latitude")
+            );
+
+        String longitude =
+            valueToString(
+                caseRow.get("Longitude")
+            );
+
+
+        if (latitude.isEmpty()
+                || longitude.isEmpty()) {
+
+            unmappedCases++;
+            continue;
+        }
+
+
+        String districtId =
+            valueToString(
+                caseRow.get("District")
+            );
+
+        String unitId =
+            valueToString(
+                caseRow.get("PoliceStation")
+            );
+
+        String crimeHeadId =
+            valueToString(
+                caseRow.get("CrimeHead")
+            );
+
+        String gravityId =
+            valueToString(
+                caseRow.get("GravityOffence")
+            );
+
+
+        String district =
+            districtMap.getOrDefault(
+                districtId,
+                "Unknown"
+            );
+
+        String policeStation =
+            unitMap.getOrDefault(
+                unitId,
+                "Unknown"
+            );
+
+        String crimeHead =
+            crimeHeadMap.getOrDefault(
+                crimeHeadId,
+                "Unknown"
+            );
+
+        String gravity =
+            gravityMap.getOrDefault(
+                gravityId,
+                "Unknown"
+            );
+
+
+        String hotspotKey =
+            latitude
+            + "|"
+            + longitude
+            + "|"
+            + district
+            + "|"
+            + policeStation;
+
+
+        java.util.Map<String, Object>
+            hotspot =
+                hotspotMap.get(
+                    hotspotKey
+                );
+
+
+        if (hotspot == null) {
+
+            hotspot =
+                new java.util.LinkedHashMap<
+                    String,
+                    Object
+                >();
+
+            hotspot.put(
+                "latitude",
+                latitude
+            );
+
+            hotspot.put(
+                "longitude",
+                longitude
+            );
+
+            hotspot.put(
+                "district",
+                district
+            );
+
+            hotspot.put(
+                "policeStation",
+                policeStation
+            );
+
+            hotspot.put(
+                "caseCount",
+                0
+            );
+
+            hotspot.put(
+                "seriousCases",
+                0
+            );
+
+            hotspot.put(
+                "heinousCases",
+                0
+            );
+
+            hotspot.put(
+                "crimeCounts",
+                new java.util.LinkedHashMap<
+                    String,
+                    Integer
+                >()
+            );
+
+
+            hotspotMap.put(
+                hotspotKey,
+                hotspot
+            );
+        }
+
+
+        // =============================================
+        // TOTAL CASE COUNT
+        // =============================================
+        int currentCaseCount =
+            (Integer) hotspot.get(
+                "caseCount"
+            );
+
+        hotspot.put(
+            "caseCount",
+            currentCaseCount + 1
+        );
+
+
+        // =============================================
+        // GRAVITY COUNTS
+        // =============================================
+        if ("Serious".equalsIgnoreCase(
+                gravity
+        )) {
+
+            int current =
+                (Integer) hotspot.get(
+                    "seriousCases"
+                );
+
+            hotspot.put(
+                "seriousCases",
+                current + 1
+            );
+        }
+
+
+        if ("Heinous".equalsIgnoreCase(
+                gravity
+        )) {
+
+            int current =
+                (Integer) hotspot.get(
+                    "heinousCases"
+                );
+
+            hotspot.put(
+                "heinousCases",
+                current + 1
+            );
+        }
+
+
+        // =============================================
+        // CRIME HEAD DISTRIBUTION
+        // =============================================
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Integer>
+            crimeCounts =
+                (java.util.Map<
+                    String,
+                    Integer
+                >)
+                hotspot.get(
+                    "crimeCounts"
+                );
+
+
+        crimeCounts.put(
+            crimeHead,
+            crimeCounts.getOrDefault(
+                crimeHead,
+                0
+            ) + 1
+        );
+
+
+        totalMappedCases++;
+    }
+
+
+    // =================================================
+    // BUILD JSON RESPONSE
+    // =================================================
+    StringBuilder json =
+        new StringBuilder();
+
+
+    json.append(
+        "{"
+        + "\"success\":true,"
+        + "\"data\":{"
+        + "\"hotspots\":["
+    );
+
+
+    boolean firstHotspot =
+        true;
+
+
+    for (java.util.Map<String, Object>
+            hotspot :
+            hotspotMap.values()) {
+
+
+        if (!firstHotspot) {
+            json.append(",");
+        }
+
+        firstHotspot =
+            false;
+
+
+        String latitude =
+            hotspot.get(
+                "latitude"
+            ).toString();
+
+        String longitude =
+            hotspot.get(
+                "longitude"
+            ).toString();
+
+        String district =
+            hotspot.get(
+                "district"
+            ).toString();
+
+        String policeStation =
+            hotspot.get(
+                "policeStation"
+            ).toString();
+
+        int caseCount =
+            (Integer) hotspot.get(
+                "caseCount"
+            );
+
+        int seriousCases =
+            (Integer) hotspot.get(
+                "seriousCases"
+            );
+
+        int heinousCases =
+            (Integer) hotspot.get(
+                "heinousCases"
+            );
+
+
+        // =============================================
+        // FIND DOMINANT CRIME TYPE
+        // =============================================
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Integer>
+            crimeCounts =
+                (java.util.Map<
+                    String,
+                    Integer
+                >)
+                hotspot.get(
+                    "crimeCounts"
+                );
+
+
+        String dominantCrime =
+            "Unknown";
+
+        int dominantCrimeCount =
+            0;
+
+
+        for (java.util.Map.Entry<
+                String,
+                Integer
+            > entry :
+                crimeCounts.entrySet()) {
+
+
+            if (entry.getValue()
+                    > dominantCrimeCount) {
+
+                dominantCrime =
+                    entry.getKey();
+
+                dominantCrimeCount =
+                    entry.getValue();
+            }
+        }
+
+
+        // =============================================
+        // HOTSPOT RISK LEVEL
+        // =============================================
+        String riskLevel;
+
+
+        if (heinousCases >= 5
+                || caseCount >= 20) {
+
+            riskLevel =
+                "Critical";
+
+        } else if (heinousCases >= 2
+                || seriousCases >= 8
+                || caseCount >= 10) {
+
+            riskLevel =
+                "High";
+
+        } else if (caseCount >= 5) {
+
+            riskLevel =
+                "Moderate";
+
+        } else {
+
+            riskLevel =
+                "Low";
+        }
+
+
+        // =============================================
+        // APPEND HOTSPOT
+        // =============================================
+        json.append(
+            "{"
+            + "\"latitude\":\""
+            + escapeJson(latitude)
+            + "\","
+            + "\"longitude\":\""
+            + escapeJson(longitude)
+            + "\","
+            + "\"district\":\""
+            + escapeJson(district)
+            + "\","
+            + "\"policeStation\":\""
+            + escapeJson(policeStation)
+            + "\","
+            + "\"caseCount\":"
+            + caseCount
+            + ","
+            + "\"seriousCases\":"
+            + seriousCases
+            + ","
+            + "\"heinousCases\":"
+            + heinousCases
+            + ","
+            + "\"dominantCrime\":\""
+            + escapeJson(
+                dominantCrime
+            )
+            + "\","
+            + "\"riskLevel\":\""
+            + escapeJson(
+                riskLevel
+            )
+            + "\""
+            + "}"
+        );
+    }
+
+
+    // =================================================
+    // META
+    // =================================================
+    json.append(
+        "],"
+        + "\"meta\":{"
+        + "\"totalHotspots\":"
+        + hotspotMap.size()
+        + ","
+        + "\"mappedCases\":"
+        + totalMappedCases
+        + ","
+        + "\"unmappedCases\":"
+        + unmappedCases
+        + "}"
+        + "},"
+        + "\"message\":"
+        + "\"Crime hotspot analytics retrieved successfully\""
+        + "}"
+    );
+
+
+    response.setStatus(
+        HttpServletResponse.SC_OK
+    );
+
+    response.getWriter().write(
+        json.toString()
+    );
+
+    return;
+}
+
+            // =====================================================
+// ADMIN API - UPDATE CASE COORDINATES BY POLICE STATION
+//
+// Endpoint:
+// POST /admin/update-case-coordinates
+//
+// Purpose:
+// Assign distinct prototype coordinates to existing
+// CaseMaster rows based on their PoliceStation.
+//
+// IMPORTANT:
+// Prototype/demo coordinates only.
+// =====================================================
+if ("/admin/update-case-coordinates".equals(path)
+        && "POST".equalsIgnoreCase(method)) {
+
+    LOGGER.info(
+        "Updating CaseMaster coordinates by police station..."
+    );
+
+    ZCObject datastore =
+        ZCObject.getInstance();
+
+    ZCTable caseTable =
+        datastore.getTable("CaseMaster");
+
+    ZCTable unitTable =
+        datastore.getTable("Unit");
+
+
+    if (caseTable == null
+            || unitTable == null) {
+
+        throw new Exception(
+            "Unable to access CaseMaster or Unit table"
+        );
+    }
+
+
+    // =================================================
+    // UNIT ROWID -> UNIT CODE
+    // =================================================
+    java.util.Map<String, String>
+        unitCodeMap =
+            new java.util.LinkedHashMap<
+                String,
+                String
+            >();
+
+
+    for (ZCRowObject unitRow :
+            unitTable.getAllRows()) {
+
+        String rowId =
+            valueToString(
+                unitRow.get("ROWID")
+            );
+
+        String unitCode =
+            valueToString(
+                unitRow.get("UnitCode")
+            );
+
+
+        if (!rowId.isEmpty()
+                && !unitCode.isEmpty()) {
+
+            unitCodeMap.put(
+                rowId,
+                unitCode
+            );
+        }
+    }
+
+
+    // =================================================
+    // PROTOTYPE UNIT COORDINATES
+    //
+    // These are deliberately separated around each
+    // city so hotspot markers do not overlap.
+    // =================================================
+    java.util.Map<String, String[]>
+        coordinateMap =
+            new java.util.LinkedHashMap<
+                String,
+                String[]
+            >();
+
+
+    // Bengaluru
+    coordinateMap.put(
+        "BLR-CB-001",
+        new String[]{
+            "12.9850",
+            "77.6050"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-CR-001",
+        new String[]{
+            "12.9716",
+            "77.5946"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-CYB-001",
+        new String[]{
+            "12.9560",
+            "77.6100"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-PS-001",
+        new String[]{
+            "12.9750",
+            "77.5800"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-PS-002",
+        new String[]{
+            "12.9800",
+            "77.6250"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-PS-003",
+        new String[]{
+            "12.9700",
+            "77.5550"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-TRF-001",
+        new String[]{
+            "12.9600",
+            "77.5900"
+        }
+    );
+
+    coordinateMap.put(
+        "BLR-WPS-001",
+        new String[]{
+            "12.9900",
+            "77.5800"
+        }
+    );
+
+
+    // Mysuru
+    coordinateMap.put(
+        "MYS-CYB-001",
+        new String[]{
+            "12.3100",
+            "76.6500"
+        }
+    );
+
+    coordinateMap.put(
+        "MYS-PS-001",
+        new String[]{
+            "12.2958",
+            "76.6394"
+        }
+    );
+
+    coordinateMap.put(
+        "MYS-PS-002",
+        new String[]{
+            "12.3250",
+            "76.6400"
+        }
+    );
+
+    coordinateMap.put(
+        "MYS-TRF-001",
+        new String[]{
+            "12.2850",
+            "76.6550"
+        }
+    );
+
+
+    // Mangaluru
+    coordinateMap.put(
+        "MLR-PS-001",
+        new String[]{
+            "12.9141",
+            "74.8560"
+        }
+    );
+
+    coordinateMap.put(
+        "MLR-TRF-001",
+        new String[]{
+            "12.9250",
+            "74.8700"
+        }
+    );
+
+    coordinateMap.put(
+        "MLR-WPS-001",
+        new String[]{
+            "12.9000",
+            "74.8450"
+        }
+    );
+
+
+    // =================================================
+    // UPDATE EXISTING CASEMASTER ROWS
+    // =================================================
+    int updated =
+        0;
+
+    int skipped =
+        0;
+
+    int unknownUnit =
+        0;
+
+    // =================================================
+    // COLLECT CASE ROWS FOR BULK UPDATE
+    // =================================================
+    java.util.List<ZCRowObject> rowsToUpdate =
+        new java.util.ArrayList<ZCRowObject>();
+
+    for (ZCRowObject caseRow :
+            caseTable.getAllRows()) {
+
+
+        String policeStationRowId =
+            valueToString(
+                caseRow.get(
+                    "PoliceStation"
+                )
+            );
+
+
+        String unitCode =
+            unitCodeMap.get(
+                policeStationRowId
+            );
+
+
+        if (unitCode == null
+                || unitCode.isEmpty()) {
+
+            unknownUnit++;
+            continue;
+        }
+
+
+        String[] coordinates =
+            coordinateMap.get(
+                unitCode
+            );
+
+
+        if (coordinates == null) {
+
+            skipped++;
+            continue;
+        }
+
+
+        ZCRowObject updateRow =
+    ZCRowObject.getInstance();
+
+updateRow.set(
+    "ROWID",
+    caseRow.get("ROWID")
+);
+
+updateRow.set(
+    "Latitude",
+    coordinates[0]
+);
+
+updateRow.set(
+    "Longitude",
+    coordinates[1]
+);
+
+rowsToUpdate.add(
+    updateRow
+);
+
+updated++;
+    }
+    if (!rowsToUpdate.isEmpty()) {
+
+    caseTable.updateRows(
+        rowsToUpdate
+    );
+}
+
+
+    // =================================================
+    // RESPONSE
+    // =================================================
+    response.setStatus(
+        HttpServletResponse.SC_OK
+    );
+
+
+    response.getWriter().write(
+        "{"
+        + "\"success\":true,"
+        + "\"data\":{"
+        + "\"updated\":"
+        + updated
+        + ","
+        + "\"skipped\":"
+        + skipped
+        + ","
+        + "\"unknownUnit\":"
+        + unknownUnit
+        + ","
+        + "\"coordinateMappings\":"
+        + coordinateMap.size()
+        + "},"
+        + "\"message\":"
+        + "\"Case coordinates updated successfully\""
+        + "}"
+    );
+
 
     return;
 }

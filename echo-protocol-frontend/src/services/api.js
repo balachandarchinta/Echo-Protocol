@@ -151,3 +151,21 @@ export function getUnitDetails(rowId) {
     `/unit/details/${rowId}`
   );
 }
+
+// =====================================================
+// CRIME HOTSPOT ANALYTICS
+// =====================================================
+export function getCrimeHotspots() {
+  return fetchApi(
+    "/analytics/hotspots"
+  );
+}
+
+// =====================================================
+// ANALYTICS - GEOGRAPHIC HOTSPOTS
+// =====================================================
+export function getHotspots() {
+  return fetchApi(
+    "/analytics/hotspots"
+  );
+}
