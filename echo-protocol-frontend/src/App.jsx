@@ -33,6 +33,7 @@ import { getDashboardData } from "./services/api";
 import Cases from "./pages/Cases";
 import CaseDetails from "./pages/CaseDetails";
 import Units from "./pages/Units";
+import UnitDetails from "./pages/UnitDetails";
 
 const STATUS_COLORS = [
   "#2563eb",
@@ -110,6 +111,9 @@ function Dashboard() {
     useState("dashboard");
   
   const [selectedCaseId, setSelectedCaseId] =
+    useState(null);
+  
+  const [selectedUnitId, setSelectedUnitId] =
     useState(null);
   
   const [dashboardData, setDashboardData] =
@@ -273,6 +277,7 @@ function Dashboard() {
   }
   onClick={() => {
   setSelectedCaseId(null);
+  setSelectedUnitId(null);
   setActivePage("cases");
 }}
 >
@@ -282,10 +287,11 @@ function Dashboard() {
 
           <button
   className={
-    activePage === "units"
-      ? "nav-item active"
-      : "nav-item"
-  }
+  activePage === "units" ||
+  activePage === "unit-details"
+    ? "nav-item active"
+    : "nav-item"
+}
   onClick={() => {
     setSelectedCaseId(null);
     setActivePage("units");
@@ -331,7 +337,19 @@ function Dashboard() {
       setActivePage("cases");
     }}
   />
+) : activePage === "unit-details" ? (
 
+  <UnitDetails
+    rowId={selectedUnitId}
+    onBack={() => {
+      setSelectedUnitId(null);
+      setActivePage("units");
+    }}
+    onSelectCase={(rowId) => {
+      setSelectedCaseId(rowId);
+      setActivePage("case-details");
+    }}
+  />
 ) : activePage === "cases" ? (
 
   <Cases
@@ -342,7 +360,13 @@ function Dashboard() {
   />
 ) : activePage === "units" ? (
 
-  <Units />
+  <Units 
+    onSelectUnit={(rowId) => {
+      setSelectedUnitId(rowId);
+      setActivePage("unit-details");
+    }}
+  />
+
 ) : (
 
   <>

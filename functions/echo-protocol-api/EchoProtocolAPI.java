@@ -4798,6 +4798,623 @@ if ("/unit/list".equals(path)
 }
 
             // =====================================================
+// UNIT API - UNIT DETAILS
+//
+// Endpoint:
+// GET /unit/details/{rowId}
+//
+// Returns:
+// Unit profile and operational case statistics.
+// =====================================================
+if (path.startsWith("/unit/details/")
+        && "GET".equalsIgnoreCase(method)) {
+
+    LOGGER.info(
+        "Retrieving unit details..."
+    );
+
+
+    // =================================================
+    // EXTRACT UNIT ROWID
+    // =================================================
+    String unitRowId =
+        path.substring(
+            "/unit/details/".length()
+        ).trim();
+
+
+    if (unitRowId.isEmpty()) {
+
+        response.setStatus(
+            HttpServletResponse.SC_BAD_REQUEST
+        );
+
+        response.getWriter().write(
+            "{"
+            + "\"success\":false,"
+            + "\"data\":{},"
+            + "\"message\":\"Unit ROWID is required\""
+            + "}"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // LOAD TABLES
+    // =================================================
+    ZCObject datastore =
+        ZCObject.getInstance();
+
+    ZCTable unitTable =
+        datastore.getTable("Unit");
+
+    ZCTable districtTable =
+        datastore.getTable("District");
+
+    ZCTable unitTypeTable =
+        datastore.getTable("UnitType");
+
+    ZCTable caseTable =
+        datastore.getTable("CaseMaster");
+
+    ZCTable statusTable =
+        datastore.getTable("CaseStatusMaster");
+
+    ZCTable crimeHeadTable =
+        datastore.getTable("CrimeHead");
+
+
+    if (unitTable == null
+            || districtTable == null
+            || unitTypeTable == null
+            || caseTable == null
+            || statusTable == null
+            || crimeHeadTable == null) {
+
+        throw new Exception(
+            "Unable to access one or more unit detail tables"
+        );
+    }
+
+
+    // =================================================
+    // BUILD LOOKUP MAPS
+    // =================================================
+    java.util.Map<String, String> districtMap =
+        buildLookupMap(
+            districtTable,
+            "DistrictName"
+        );
+
+    java.util.Map<String, String> unitTypeMap =
+        buildLookupMap(
+            unitTypeTable,
+            "UnitType"
+        );
+
+    java.util.Map<String, String> statusMap =
+        buildLookupMap(
+            statusTable,
+            "StatusName"
+        );
+
+    java.util.Map<String, String> crimeHeadMap =
+        buildLookupMap(
+            crimeHeadTable,
+            "CrimeHeadName"
+        );
+
+
+    // =================================================
+    // FIND REQUESTED UNIT
+    // =================================================
+    ZCRowObject matchedUnit =
+        null;
+
+
+    for (ZCRowObject unitRow :
+            unitTable.getAllRows()) {
+
+        Object rowId =
+            unitRow.get("ROWID");
+
+        if (rowId != null
+                && unitRowId.equals(
+                    rowId.toString().trim()
+                )) {
+
+            matchedUnit =
+                unitRow;
+
+            break;
+        }
+    }
+
+
+    // =================================================
+    // UNIT NOT FOUND
+    // =================================================
+    if (matchedUnit == null) {
+
+        response.setStatus(
+            HttpServletResponse.SC_NOT_FOUND
+        );
+
+        response.getWriter().write(
+            "{"
+            + "\"success\":false,"
+            + "\"data\":{},"
+            + "\"message\":\"Unit not found\""
+            + "}"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // READ UNIT VALUES
+    // =================================================
+    String rowIdValue =
+        valueToString(
+            matchedUnit.get("ROWID")
+        );
+
+    String unitCodeValue =
+        valueToString(
+            matchedUnit.get("UnitCode")
+        );
+
+    String unitNameValue =
+        valueToString(
+            matchedUnit.get("UnitName")
+        );
+
+    String districtIdValue =
+        valueToString(
+            matchedUnit.get("District")
+        );
+
+    String unitTypeIdValue =
+        valueToString(
+            matchedUnit.get("UnitType")
+        );
+
+    String addressValue =
+        valueToString(
+            matchedUnit.get("Address")
+        );
+
+    String isActiveValue =
+        valueToString(
+            matchedUnit.get("IsActive")
+        );
+
+
+    String districtName =
+        districtMap.getOrDefault(
+            districtIdValue,
+            "Unknown"
+        );
+
+    String unitTypeName =
+        unitTypeMap.getOrDefault(
+            unitTypeIdValue,
+            "Unknown"
+        );
+
+
+    boolean isActive =
+        "true".equalsIgnoreCase(
+            isActiveValue
+        )
+        || "1".equals(
+            isActiveValue
+        );
+
+
+    // =================================================
+    // CALCULATE UNIT CASE STATISTICS
+    // =================================================
+    int totalCases = 0;
+    int openCases = 0;
+    int closedCases = 0;
+    int chargeSheets = 0;
+
+
+    java.util.Map<String, Integer>
+        crimeDistribution =
+            new java.util.LinkedHashMap<
+                String,
+                Integer
+            >();
+
+
+    // Keep a limited recent-case collection.
+    java.util.List<ZCRowObject> unitCases =
+        new java.util.ArrayList<
+            ZCRowObject
+        >();
+
+
+    for (ZCRowObject caseRow :
+            caseTable.getAllRows()) {
+
+
+        String caseUnitId =
+            valueToString(
+                caseRow.get(
+                    "PoliceStation"
+                )
+            );
+
+
+        if (!rowIdValue.equals(
+                caseUnitId
+        )) {
+
+            continue;
+        }
+
+
+        totalCases++;
+
+        unitCases.add(
+            caseRow
+        );
+
+
+        // =============================================
+        // STATUS COUNTS
+        // =============================================
+        String statusId =
+            valueToString(
+                caseRow.get(
+                    "CaseStatus"
+                )
+            );
+
+        String statusName =
+            statusMap.getOrDefault(
+                statusId,
+                "Unknown"
+            );
+
+
+        if ("Closed".equalsIgnoreCase(
+                statusName
+        )) {
+
+            closedCases++;
+
+        } else {
+
+            openCases++;
+
+        }
+
+
+        if ("Charge Sheet Filed"
+                .equalsIgnoreCase(
+                    statusName
+                )) {
+
+            chargeSheets++;
+        }
+
+
+        // =============================================
+        // CRIME DISTRIBUTION
+        // =============================================
+        String crimeHeadId =
+            valueToString(
+                caseRow.get(
+                    "CrimeHead"
+                )
+            );
+
+        String crimeHeadName =
+            crimeHeadMap.getOrDefault(
+                crimeHeadId,
+                "Unknown"
+            );
+
+
+        crimeDistribution.put(
+            crimeHeadName,
+            crimeDistribution
+                .getOrDefault(
+                    crimeHeadName,
+                    0
+                )
+            + 1
+        );
+    }
+
+
+    // =================================================
+    // BUILD JSON RESPONSE
+    // =================================================
+    StringBuilder json =
+        new StringBuilder();
+
+
+    json.append(
+        "{"
+        + "\"success\":true,"
+        + "\"data\":{"
+    );
+
+
+    // =================================================
+    // UNIT PROFILE
+    // =================================================
+    json.append(
+        "\"rowId\":\""
+        + escapeJson(rowIdValue)
+        + "\","
+    );
+
+    json.append(
+        "\"unitCode\":\""
+        + escapeJson(unitCodeValue)
+        + "\","
+    );
+
+    json.append(
+        "\"unitName\":\""
+        + escapeJson(unitNameValue)
+        + "\","
+    );
+
+    json.append(
+        "\"districtId\":\""
+        + escapeJson(districtIdValue)
+        + "\","
+    );
+
+    json.append(
+        "\"district\":\""
+        + escapeJson(districtName)
+        + "\","
+    );
+
+    json.append(
+        "\"unitTypeId\":\""
+        + escapeJson(unitTypeIdValue)
+        + "\","
+    );
+
+    json.append(
+        "\"unitType\":\""
+        + escapeJson(unitTypeName)
+        + "\","
+    );
+
+    json.append(
+        "\"address\":\""
+        + escapeJson(addressValue)
+        + "\","
+    );
+
+    json.append(
+        "\"isActive\":"
+        + isActive
+        + ","
+    );
+
+
+    // =================================================
+    // OPERATIONAL SUMMARY
+    // =================================================
+    json.append(
+        "\"statistics\":{"
+        + "\"totalCases\":"
+        + totalCases
+        + ","
+        + "\"openCases\":"
+        + openCases
+        + ","
+        + "\"closedCases\":"
+        + closedCases
+        + ","
+        + "\"chargeSheets\":"
+        + chargeSheets
+        + "},"
+    );
+
+
+    // =================================================
+    // CRIME DISTRIBUTION
+    // =================================================
+    json.append(
+        "\"crimeDistribution\":["
+    );
+
+
+    boolean firstCrime =
+        true;
+
+
+    for (java.util.Map.Entry<
+            String,
+            Integer
+        > entry :
+            crimeDistribution
+                .entrySet()) {
+
+
+        if (!firstCrime) {
+            json.append(",");
+        }
+
+        firstCrime =
+            false;
+
+
+        json.append(
+            "{"
+            + "\"label\":\""
+            + escapeJson(
+                entry.getKey()
+            )
+            + "\","
+            + "\"count\":"
+            + entry.getValue()
+            + "}"
+        );
+    }
+
+
+    json.append("],");
+
+
+    // =================================================
+    // RECENT CASES
+    //
+    // Prototype:
+    // Returns up to 5 cases associated with the unit.
+    // =================================================
+    json.append(
+        "\"recentCases\":["
+    );
+
+
+    boolean firstCase =
+        true;
+
+    int recentCaseCount =
+        0;
+
+
+    for (ZCRowObject caseRow :
+            unitCases) {
+
+
+        if (recentCaseCount >= 5) {
+            break;
+        }
+
+
+        if (!firstCase) {
+            json.append(",");
+        }
+
+        firstCase =
+            false;
+
+
+        String caseRowId =
+            valueToString(
+                caseRow.get("ROWID")
+            );
+
+        String crimeNo =
+            valueToString(
+                caseRow.get("CrimeNo")
+            );
+
+        String firNo =
+            valueToString(
+                caseRow.get("FIRNo")
+            );
+
+        String registeredDate =
+            valueToString(
+                caseRow.get(
+                    "CrimeRegsiteredDate"
+                )
+            );
+
+        String statusId =
+            valueToString(
+                caseRow.get(
+                    "CaseStatus"
+                )
+            );
+
+        String statusName =
+            statusMap.getOrDefault(
+                statusId,
+                "Unknown"
+            );
+
+        String crimeHeadId =
+            valueToString(
+                caseRow.get(
+                    "CrimeHead"
+                )
+            );
+
+        String crimeHeadName =
+            crimeHeadMap.getOrDefault(
+                crimeHeadId,
+                "Unknown"
+            );
+
+
+        json.append(
+            "{"
+            + "\"rowId\":\""
+            + escapeJson(caseRowId)
+            + "\","
+            + "\"crimeNo\":\""
+            + escapeJson(crimeNo)
+            + "\","
+            + "\"firNumber\":\""
+            + escapeJson(firNo)
+            + "\","
+            + "\"registeredDate\":\""
+            + escapeJson(
+                registeredDate
+            )
+            + "\","
+            + "\"status\":\""
+            + escapeJson(
+                statusName
+            )
+            + "\","
+            + "\"crimeHead\":\""
+            + escapeJson(
+                crimeHeadName
+            )
+            + "\""
+            + "}"
+        );
+
+
+        recentCaseCount++;
+    }
+
+
+    json.append("]");
+
+
+    // =================================================
+    // COMPLETE RESPONSE
+    // =================================================
+    json.append(
+        "},"
+        + "\"message\":"
+        + "\"Unit details retrieved successfully\""
+        + "}"
+    );
+
+
+    response.setStatus(
+        HttpServletResponse.SC_OK
+    );
+
+    response.getWriter().write(
+        json.toString()
+    );
+
+    return;
+}
+
+            // =====================================================
             // 7. 404 - ENDPOINT NOT FOUND
             // =====================================================
             response.setStatus(

@@ -17,7 +17,9 @@ import {
 } from "../services/api";
 
 
-function Units() {
+function Units({
+  onSelectUnit,
+}) {
 
   const [units, setUnits] =
     useState([]);
@@ -413,9 +415,12 @@ function Units() {
             (unit) => (
 
               <article
-                key={unit.rowId}
-                className="unit-card"
-              >
+  key={unit.rowId}
+  className="unit-card unit-card-clickable"
+  onClick={() =>
+    onSelectUnit(unit.rowId)
+  }
+>
 
                 <div className="unit-card-top">
 

@@ -142,3 +142,12 @@ export function getUnits() {
     "/unit/list"
   );
 }
+
+// =====================================================
+// UNIT DETAILS
+// =====================================================
+export function getUnitDetails(rowId) {
+  return fetchApi(
+    `/unit/details/${rowId}`
+  );
+}
