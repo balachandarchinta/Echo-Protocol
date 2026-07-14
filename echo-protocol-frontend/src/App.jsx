@@ -31,6 +31,7 @@ import {
 
 import { getDashboardData } from "./services/api";
 import Cases from "./pages/Cases";
+import CaseDetails from "./pages/CaseDetails";
 
 
 const STATUS_COLORS = [
@@ -107,6 +108,9 @@ function ChartCard({
 function Dashboard() {
   const [activePage, setActivePage] =
     useState("dashboard");
+  
+  const [selectedCaseId, setSelectedCaseId] =
+    useState(null);
   
   const [dashboardData, setDashboardData] =
     useState(null);
@@ -247,13 +251,15 @@ function Dashboard() {
 
           <button
   className={
-    activePage === "dashboard"
-      ? "nav-item active"
-      : "nav-item"
-  }
-  onClick={() =>
-    setActivePage("dashboard")
-  }
+  activePage === "cases" ||
+  activePage === "case-details"
+    ? "nav-item active"
+    : "nav-item"
+}
+  onClick={() => {
+  setSelectedCaseId(null);
+  setActivePage("dashboard");
+}}
 >
   <Activity size={19} />
   Dashboard
@@ -265,9 +271,10 @@ function Dashboard() {
       ? "nav-item active"
       : "nav-item"
   }
-  onClick={() =>
-    setActivePage("cases")
-  }
+  onClick={() => {
+  setSelectedCaseId(null);
+  setActivePage("cases");
+}}
 >
   <ClipboardList size={19} />
   Cases
@@ -304,9 +311,28 @@ function Dashboard() {
           MAIN CONTENT
       ========================================== */}
       <main className="main-content">
-      {activePage === "cases" ? (
-  <Cases />
+      
+      {activePage === "case-details" ? (
+
+  <CaseDetails
+    rowId={selectedCaseId}
+    onBack={() => {
+      setSelectedCaseId(null);
+      setActivePage("cases");
+    }}
+  />
+
+) : activePage === "cases" ? (
+
+  <Cases
+    onSelectCase={(rowId) => {
+      setSelectedCaseId(rowId);
+      setActivePage("case-details");
+    }}
+  />
+
 ) : (
+
   <>
         {/* HEADER */}
         <header className="topbar">

@@ -11,7 +11,9 @@ import { getCases } from "../services/api";
 
 const PAGE_SIZE = 10;
 
-function Cases() {
+function Cases({
+  onSelectCase,
+}) {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -470,92 +472,81 @@ function Cases() {
                 <th>Gravity</th>
               </tr>
             </thead>
-
+            
             <tbody>
+  {paginatedCases.length === 0 ? (
+    <tr>
+      <td
+        colSpan="8"
+        className="case-empty-state"
+      >
+        No cases match the selected search and filters.
+      </td>
+    </tr>
+  ) : (
+    paginatedCases.map((item) => (
+      <tr
+        key={item.rowId}
+        className="case-table-row-clickable"
+        onClick={() => onSelectCase(item.rowId)}
+      >
+        <td>
+          <strong className="case-number">
+            {item.crimeNo}
+          </strong>
+        </td>
 
-              {paginatedCases.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="8"
-                    className="case-empty-state"
-                  >
-                    No cases match the selected
-                    search and filters.
-                  </td>
-                </tr>
-              ) : (
-                paginatedCases.map((item) => (
-                  <tr key={item.rowId}>
+        <td>
+          {item.firNumber}
+        </td>
 
-                    <td>
-                      <strong className="case-number">
-                        {item.crimeNo}
-                      </strong>
-                    </td>
+        <td>
+          {item.firDate}
+        </td>
 
-                    <td>
-                      {item.firNumber}
-                    </td>
+        <td>
+          {item.district}
+        </td>
 
-                    <td>
-                      {item.firDate}
-                    </td>
+        <td>
+          {item.policeStation}
+        </td>
 
-                    <td>
-                      {item.district}
-                    </td>
+        <td>
+          <div className="crime-classification">
+            <strong>
+              {item.crimeHead}
+            </strong>
 
-                    <td>
-                      {item.policeStation}
-                    </td>
+            <span>
+              {item.crimeSubHead}
+            </span>
+          </div>
+        </td>
 
-                    <td>
-                      <div className="crime-classification">
-                        <strong>
-                          {item.crimeHead}
-                        </strong>
+        <td>
+          <span
+            className={getStatusClass(item.status)}
+          >
+            {item.status}
+          </span>
+        </td>
 
-                        <span>
-                          {item.crimeSubHead}
-                        </span>
-                      </div>
-                    </td>
+        <td>
+          <span
+            className={getGravityClass(item.gravity)}
+          >
+            {item.gravity}
+          </span>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
 
-                    <td>
-                      <span
-                        className={
-                          getStatusClass(
-                            item.status
-                          )
-                        }
-                      >
-                        {item.status}
-                      </span>
-                    </td>
+</table>
 
-                    <td>
-                      <span
-                        className={
-                          getGravityClass(
-                            item.gravity
-                          )
-                        }
-                      >
-                        {item.gravity}
-                      </span>
-                    </td>
-
-                  </tr>
-                ))
-              )}
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-
+</div>
         {/* PAGINATION */}
         <div className="case-pagination">
 

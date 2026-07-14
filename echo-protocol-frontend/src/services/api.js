@@ -125,3 +125,11 @@ export function getCases() {
     "/crime/list"
   );
 }
+// =====================================================
+// CASE DETAILS
+// =====================================================
+export function getCaseDetails(rowId) {
+  return fetchApi(
+    `/crime/details/${rowId}`
+  );
+}

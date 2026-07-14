@@ -3890,6 +3890,627 @@ if ("/crime/list".equals(path)
 }
 
             // =====================================================
+// CRIME API - CASE DETAILS
+//
+// Endpoint:
+// GET /crime/details/{rowId}
+//
+// Returns:
+// Complete case information with human-readable
+// lookup values.
+// =====================================================
+if (path.startsWith("/crime/details/")
+        && "GET".equalsIgnoreCase(method)) {
+
+    LOGGER.info(
+        "Retrieving case details..."
+    );
+
+
+    // =================================================
+    // EXTRACT CASE ROWID FROM URL
+    // =================================================
+    String caseRowId =
+        path.substring(
+            "/crime/details/".length()
+        ).trim();
+
+
+    if (caseRowId.isEmpty()) {
+
+        response.setStatus(
+            HttpServletResponse.SC_BAD_REQUEST
+        );
+
+        response.getWriter().write(
+            "{"
+            + "\"success\":false,"
+            + "\"data\":{},"
+            + "\"message\":"
+            + "\"Case ROWID is required\""
+            + "}"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // LOAD DATA STORE TABLES
+    // =================================================
+    ZCObject datastore =
+        ZCObject.getInstance();
+
+    ZCTable caseTable =
+        datastore.getTable("CaseMaster");
+
+    ZCTable districtTable =
+        datastore.getTable("District");
+
+    ZCTable unitTable =
+        datastore.getTable("Unit");
+
+    ZCTable crimeHeadTable =
+        datastore.getTable("CrimeHead");
+
+    ZCTable crimeSubHeadTable =
+        datastore.getTable("CrimeSubHead");
+
+    ZCTable statusTable =
+        datastore.getTable("CaseStatusMaster");
+
+    ZCTable gravityTable =
+        datastore.getTable("GravityOffence");
+
+    ZCTable categoryTable =
+        datastore.getTable("CaseCategory");
+
+    ZCTable employeeTable =
+        datastore.getTable("Employee");
+
+
+    if (caseTable == null
+            || districtTable == null
+            || unitTable == null
+            || crimeHeadTable == null
+            || crimeSubHeadTable == null
+            || statusTable == null
+            || gravityTable == null
+            || categoryTable == null
+            || employeeTable == null) {
+
+        throw new Exception(
+            "Unable to access one or more case detail tables"
+        );
+    }
+
+
+    // =================================================
+    // BUILD LOOKUP MAPS
+    // =================================================
+    java.util.Map<String, String> districtMap =
+        buildLookupMap(
+            districtTable,
+            "DistrictName"
+        );
+
+    java.util.Map<String, String> unitMap =
+        buildLookupMap(
+            unitTable,
+            "UnitName"
+        );
+
+    java.util.Map<String, String> crimeHeadMap =
+        buildLookupMap(
+            crimeHeadTable,
+            "CrimeHeadName"
+        );
+
+    java.util.Map<String, String> crimeSubHeadMap =
+        buildLookupMap(
+            crimeSubHeadTable,
+            "CrimeSubHeadName"
+        );
+
+    java.util.Map<String, String> statusMap =
+        buildLookupMap(
+            statusTable,
+            "StatusName"
+        );
+
+    java.util.Map<String, String> gravityMap =
+        buildLookupMap(
+            gravityTable,
+            "GravityName"
+        );
+
+    java.util.Map<String, String> categoryMap =
+        buildLookupMap(
+            categoryTable,
+            "CategoryName"
+        );
+
+    java.util.Map<String, String> employeeMap =
+        buildLookupMap(
+            employeeTable,
+            "EmployeeName"
+        );
+
+
+    // =================================================
+    // FIND REQUESTED CASE
+    // =================================================
+    ZCRowObject matchedCase =
+        null;
+
+
+    for (ZCRowObject caseRow :
+            caseTable.getAllRows()) {
+
+        Object rowId =
+            caseRow.get("ROWID");
+
+
+        if (rowId != null
+                && caseRowId.equals(
+                    rowId.toString().trim()
+                )) {
+
+            matchedCase =
+                caseRow;
+
+            break;
+        }
+    }
+
+
+    // =================================================
+    // CASE NOT FOUND
+    // =================================================
+    if (matchedCase == null) {
+
+        response.setStatus(
+            HttpServletResponse.SC_NOT_FOUND
+        );
+
+        response.getWriter().write(
+            "{"
+            + "\"success\":false,"
+            + "\"data\":{},"
+            + "\"message\":"
+            + "\"Case not found\""
+            + "}"
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // READ CASE VALUES
+    // =================================================
+    String rowIdValue =
+        valueToString(
+            matchedCase.get("ROWID")
+        );
+
+    String crimeNoValue =
+        valueToString(
+            matchedCase.get("CrimeNo")
+        );
+
+    String firNoValue =
+        valueToString(
+            matchedCase.get("FIRNo")
+        );
+
+    String registeredDateValue =
+        valueToString(
+            matchedCase.get(
+                "CrimeRegsiteredDate"
+            )
+        );
+
+    String districtIdValue =
+        valueToString(
+            matchedCase.get("District")
+        );
+
+    String unitIdValue =
+        valueToString(
+            matchedCase.get(
+                "PoliceStation"
+            )
+        );
+
+    String categoryIdValue =
+        valueToString(
+            matchedCase.get(
+                "CaseCategory"
+            )
+        );
+
+    String gravityIdValue =
+        valueToString(
+            matchedCase.get(
+                "GravityOffence"
+            )
+        );
+
+    String crimeHeadIdValue =
+        valueToString(
+            matchedCase.get(
+                "CrimeHead"
+            )
+        );
+
+    String crimeSubHeadIdValue =
+        valueToString(
+            matchedCase.get(
+                "CrimeSubHead"
+            )
+        );
+
+    String statusIdValue =
+        valueToString(
+            matchedCase.get(
+                "CaseStatus"
+            )
+        );
+
+    String investigatingOfficerIdValue =
+        valueToString(
+            matchedCase.get(
+                "InvestigatingOfficer"
+            )
+        );
+
+    String incidentFromDateValue =
+        valueToString(
+            matchedCase.get(
+                "IncidentFromDate"
+            )
+        );
+
+    String incidentToDateValue =
+        valueToString(
+            matchedCase.get(
+                "IncidentToDate"
+            )
+        );
+
+    String informationReceivedDateValue =
+        valueToString(
+            matchedCase.get(
+                "InformationReceivedDate"
+            )
+        );
+
+    String latitudeValue =
+        valueToString(
+            matchedCase.get("Latitude")
+        );
+
+    String longitudeValue =
+        valueToString(
+            matchedCase.get("Longitude")
+        );
+
+    String briefFactsValue =
+        valueToString(
+            matchedCase.get("BriefFacts")
+        );
+
+
+    // =================================================
+    // RESOLVE HUMAN-READABLE VALUES
+    // =================================================
+    String districtName =
+        districtMap.getOrDefault(
+            districtIdValue,
+            "Unknown"
+        );
+
+    String policeStationName =
+        unitMap.getOrDefault(
+            unitIdValue,
+            "Unknown"
+        );
+
+    String categoryName =
+        categoryMap.getOrDefault(
+            categoryIdValue,
+            "Unknown"
+        );
+
+    String gravityName =
+        gravityMap.getOrDefault(
+            gravityIdValue,
+            "Unknown"
+        );
+
+    String crimeHeadName =
+        crimeHeadMap.getOrDefault(
+            crimeHeadIdValue,
+            "Unknown"
+        );
+
+    String crimeSubHeadName =
+        crimeSubHeadMap.getOrDefault(
+            crimeSubHeadIdValue,
+            "Unknown"
+        );
+
+    String statusName =
+        statusMap.getOrDefault(
+            statusIdValue,
+            "Unknown"
+        );
+
+    String investigatingOfficerName =
+        employeeMap.getOrDefault(
+            investigatingOfficerIdValue,
+            "Unknown"
+        );
+
+
+    // =================================================
+    // BUILD JSON RESPONSE
+    // =================================================
+    StringBuilder json =
+        new StringBuilder();
+
+
+    json.append(
+        "{"
+        + "\"success\":true,"
+        + "\"data\":{"
+    );
+
+
+    json.append(
+        "\"rowId\":\""
+        + escapeJson(rowIdValue)
+        + "\","
+    );
+
+    json.append(
+        "\"crimeNo\":\""
+        + escapeJson(crimeNoValue)
+        + "\","
+    );
+
+    json.append(
+        "\"firNumber\":\""
+        + escapeJson(firNoValue)
+        + "\","
+    );
+
+    json.append(
+        "\"registeredDate\":\""
+        + escapeJson(
+            registeredDateValue
+        )
+        + "\","
+    );
+
+
+    // District
+    json.append(
+        "\"districtId\":\""
+        + escapeJson(
+            districtIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"district\":\""
+        + escapeJson(
+            districtName
+        )
+        + "\","
+    );
+
+
+    // Police Station
+    json.append(
+        "\"unitId\":\""
+        + escapeJson(
+            unitIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"policeStation\":\""
+        + escapeJson(
+            policeStationName
+        )
+        + "\","
+    );
+
+
+    // Category
+    json.append(
+        "\"caseCategoryId\":\""
+        + escapeJson(
+            categoryIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"caseCategory\":\""
+        + escapeJson(
+            categoryName
+        )
+        + "\","
+    );
+
+
+    // Crime classification
+    json.append(
+        "\"crimeHeadId\":\""
+        + escapeJson(
+            crimeHeadIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"crimeHead\":\""
+        + escapeJson(
+            crimeHeadName
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"crimeSubHeadId\":\""
+        + escapeJson(
+            crimeSubHeadIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"crimeSubHead\":\""
+        + escapeJson(
+            crimeSubHeadName
+        )
+        + "\","
+    );
+
+
+    // Status
+    json.append(
+        "\"caseStatusId\":\""
+        + escapeJson(
+            statusIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"status\":\""
+        + escapeJson(
+            statusName
+        )
+        + "\","
+    );
+
+
+    // Gravity
+    json.append(
+        "\"offenceGravityId\":\""
+        + escapeJson(
+            gravityIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"gravity\":\""
+        + escapeJson(
+            gravityName
+        )
+        + "\","
+    );
+
+
+    // Investigating officer
+    json.append(
+        "\"investigatingOfficerId\":\""
+        + escapeJson(
+            investigatingOfficerIdValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"investigatingOfficer\":\""
+        + escapeJson(
+            investigatingOfficerName
+        )
+        + "\","
+    );
+
+
+    // Incident timeline
+    json.append(
+        "\"incidentFromDate\":\""
+        + escapeJson(
+            incidentFromDateValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"incidentToDate\":\""
+        + escapeJson(
+            incidentToDateValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"informationReceivedDate\":\""
+        + escapeJson(
+            informationReceivedDateValue
+        )
+        + "\","
+    );
+
+
+    // Location
+    json.append(
+        "\"latitude\":\""
+        + escapeJson(
+            latitudeValue
+        )
+        + "\","
+    );
+
+    json.append(
+        "\"longitude\":\""
+        + escapeJson(
+            longitudeValue
+        )
+        + "\","
+    );
+
+
+    // Brief facts
+    json.append(
+        "\"briefFacts\":\""
+        + escapeJson(
+            briefFactsValue
+        )
+        + "\""
+    );
+
+
+    json.append(
+        "},"
+        + "\"message\":"
+        + "\"Case details retrieved successfully\""
+        + "}"
+    );
+
+
+    response.setStatus(
+        HttpServletResponse.SC_OK
+    );
+
+    response.getWriter().write(
+        json.toString()
+    );
+
+    return;
+}
+
+            // =====================================================
             // 7. 404 - ENDPOINT NOT FOUND
             // =====================================================
             response.setStatus(
