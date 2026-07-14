@@ -32,7 +32,7 @@ import {
 import { getDashboardData } from "./services/api";
 import Cases from "./pages/Cases";
 import CaseDetails from "./pages/CaseDetails";
-
+import Units from "./pages/Units";
 
 const STATUS_COLORS = [
   "#2563eb",
@@ -280,10 +280,20 @@ function Dashboard() {
   Cases
 </button>
 
-          <button className="nav-item">
-            <Building2 size={19} />
-            Units
-          </button>
+          <button
+  className={
+    activePage === "units"
+      ? "nav-item active"
+      : "nav-item"
+  }
+  onClick={() => {
+    setSelectedCaseId(null);
+    setActivePage("units");
+  }}
+>
+  <Building2 size={19} />
+  Units
+</button>
 
         </nav>
 
@@ -330,7 +340,9 @@ function Dashboard() {
       setActivePage("case-details");
     }}
   />
+) : activePage === "units" ? (
 
+  <Units />
 ) : (
 
   <>

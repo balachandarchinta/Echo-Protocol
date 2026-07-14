@@ -133,3 +133,12 @@ export function getCaseDetails(rowId) {
     `/crime/details/${rowId}`
   );
 }
+
+// =====================================================
+// UNIT DIRECTORY
+// =====================================================
+export function getUnits() {
+  return fetchApi(
+    "/unit/list"
+  );
+}

@@ -4511,6 +4511,293 @@ if (path.startsWith("/crime/details/")
 }
 
             // =====================================================
+// UNIT API - LIST ALL UNITS
+//
+// Endpoint:
+// GET /unit/list
+//
+// Returns:
+// Unit directory with human-readable District
+// and Unit Type values.
+// =====================================================
+if ("/unit/list".equals(path)
+        && "GET".equalsIgnoreCase(method)) {
+
+    LOGGER.info(
+        "Retrieving unit directory..."
+    );
+
+
+    // =================================================
+    // LOAD DATA STORE TABLES
+    // =================================================
+    ZCObject datastore =
+        ZCObject.getInstance();
+
+    ZCTable unitTable =
+        datastore.getTable("Unit");
+
+    ZCTable districtTable =
+        datastore.getTable("District");
+
+    ZCTable unitTypeTable =
+        datastore.getTable("UnitType");
+
+
+    if (unitTable == null
+            || districtTable == null
+            || unitTypeTable == null) {
+
+        throw new Exception(
+            "Unable to access one or more unit tables"
+        );
+    }
+
+
+    // =================================================
+    // BUILD LOOKUP MAPS
+    // =================================================
+    java.util.Map<String, String> districtMap =
+        buildLookupMap(
+            districtTable,
+            "DistrictName"
+        );
+
+    java.util.Map<String, String> unitTypeMap =
+        buildLookupMap(
+            unitTypeTable,
+            "UnitType"
+        );
+
+
+    // =================================================
+    // BUILD JSON RESPONSE
+    // =================================================
+    StringBuilder json =
+        new StringBuilder();
+
+    json.append(
+        "{"
+        + "\"success\":true,"
+        + "\"data\":["
+    );
+
+
+    boolean firstUnit = true;
+    int totalUnits = 0;
+    int activeUnits = 0;
+    int inactiveUnits = 0;
+
+
+    for (ZCRowObject unitRow :
+            unitTable.getAllRows()) {
+
+
+        // =============================================
+        // READ VALUES
+        // =============================================
+        String rowIdValue =
+            valueToString(
+                unitRow.get("ROWID")
+            );
+
+        String unitCodeValue =
+            valueToString(
+                unitRow.get("UnitCode")
+            );
+
+        String unitNameValue =
+            valueToString(
+                unitRow.get("UnitName")
+            );
+
+        String districtIdValue =
+            valueToString(
+                unitRow.get("District")
+            );
+
+        String unitTypeIdValue =
+            valueToString(
+                unitRow.get("UnitType")
+            );
+
+        String addressValue =
+            valueToString(
+                unitRow.get("Address")
+            );
+
+        String isActiveValue =
+            valueToString(
+                unitRow.get("IsActive")
+            );
+
+
+        // =============================================
+        // RESOLVE LOOKUPS
+        // =============================================
+        String districtName =
+            districtMap.getOrDefault(
+                districtIdValue,
+                "Unknown"
+            );
+
+        String unitTypeName =
+            unitTypeMap.getOrDefault(
+                unitTypeIdValue,
+                "Unknown"
+            );
+
+
+        // =============================================
+        // NORMALIZE ACTIVE STATUS
+        // =============================================
+        boolean isActive =
+            "true".equalsIgnoreCase(
+                isActiveValue
+            )
+            || "1".equals(
+                isActiveValue
+            );
+
+
+        totalUnits++;
+
+        if (isActive) {
+            activeUnits++;
+        } else {
+            inactiveUnits++;
+        }
+
+
+        // =============================================
+        // JSON COMMA HANDLING
+        // =============================================
+        if (!firstUnit) {
+            json.append(",");
+        }
+
+        firstUnit = false;
+
+
+        // =============================================
+        // APPEND UNIT JSON
+        // =============================================
+        json.append("{");
+
+        json.append(
+            "\"rowId\":\""
+            + escapeJson(
+                rowIdValue
+            )
+            + "\","
+        );
+
+        json.append(
+            "\"unitCode\":\""
+            + escapeJson(
+                unitCodeValue
+            )
+            + "\","
+        );
+
+        json.append(
+            "\"unitName\":\""
+            + escapeJson(
+                unitNameValue
+            )
+            + "\","
+        );
+
+
+        // District
+        json.append(
+            "\"districtId\":\""
+            + escapeJson(
+                districtIdValue
+            )
+            + "\","
+        );
+
+        json.append(
+            "\"district\":\""
+            + escapeJson(
+                districtName
+            )
+            + "\","
+        );
+
+
+        // Unit Type
+        json.append(
+            "\"unitTypeId\":\""
+            + escapeJson(
+                unitTypeIdValue
+            )
+            + "\","
+        );
+
+        json.append(
+            "\"unitType\":\""
+            + escapeJson(
+                unitTypeName
+            )
+            + "\","
+        );
+
+
+        // Address
+        json.append(
+            "\"address\":\""
+            + escapeJson(
+                addressValue
+            )
+            + "\","
+        );
+
+
+        // Active Status
+        json.append(
+            "\"isActive\":"
+            + isActive
+        );
+
+        json.append("}");
+    }
+
+
+    // =================================================
+    // COMPLETE RESPONSE
+    // =================================================
+    json.append(
+        "],"
+        + "\"meta\":{"
+        + "\"total\":"
+        + totalUnits
+        + ","
+        + "\"active\":"
+        + activeUnits
+        + ","
+        + "\"inactive\":"
+        + inactiveUnits
+        + "},"
+        + "\"message\":"
+        + "\"Unit directory retrieved successfully\""
+        + "}"
+    );
+
+
+    response.setStatus(
+        HttpServletResponse.SC_OK
+    );
+
+    response.getWriter().write(
+        json.toString()
+    );
+
+    return;
+}
+
+            // =====================================================
             // 7. 404 - ENDPOINT NOT FOUND
             // =====================================================
             response.setStatus(
