@@ -679,69 +679,93 @@ button {
 
 
 /* =========================================
-   CASE BADGES
+   CASE BADGES (ENTERPRISE COLOR SYSTEM)
 ========================================= */
 
-.case-badge {
+.case-badge,
+.status-badge,
+.mo-status-badge {
   display: inline-flex;
   align-items: center;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
+  letter-spacing: 0.02em;
+  transition: all 0.15s ease-in-out;
+  cursor: help;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
+.case-badge:hover,
+.status-badge:hover,
+.mo-status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
 
-/* Status */
+/* Status Colors */
 
+.status-open,
 .status-registered {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
 }
 
 .status-under-investigation {
-  background: #fff7ed;
-  color: #c2410c;
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
 }
 
 .status-charge-sheet-filed {
-  background: #f5f3ff;
-  color: #6d28d9;
-}
-
-.status-closed {
-  background: #ecfdf3;
-  color: #15803d;
+  background: #faf5ff !important;
+  color: #7e22ce !important;
+  border: 1px solid #e9d5ff !important;
 }
 
 .status-final-report-filed {
-  background: #f0fdf4;
-  color: #166534;
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+.status-closed {
+  background: #f8fafc !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 .status-transferred {
-  background: #f1f5f9;
-  color: #475569;
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 
-/* Gravity */
+/* Gravity Colors */
 
 .gravity-petty {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
 }
 
 .gravity-serious {
-  background: #fff7ed;
-  color: #c2410c;
+  background: #fff7ed !important;
+  color: #c2410c !important;
+  border: 1px solid #ffedd5 !important;
 }
 
 .gravity-heinous {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
 }
 
 
@@ -2088,4 +2112,21 @@ button {
   margin: 6px 0;
   font-size: 13px;
   color: #334155;
+}
+
+/* =========================================
+   RECHARTS DATA LABELS & READABILITY
+========================================= */
+.recharts-label-list text,
+.recharts-pie-labels text {
+  fill: #1e293b !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: #475569 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
 }

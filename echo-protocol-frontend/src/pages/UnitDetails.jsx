@@ -41,8 +41,12 @@ function UnitDetails({
       setLoading(true);
       setError(null);
 
+    console.log("Unit rowId =", rowId);
+
       const data =
         await getUnitDetails(rowId);
+
+    console.log("Unit response =", data);
 
       setUnitData(data);
 

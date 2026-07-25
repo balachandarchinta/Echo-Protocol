@@ -27,7 +27,9 @@ import {
 } from "../services/api";
 
 
-function Analytics() {
+function Analytics({
+  onSelectUnit,
+}) {
 
   const [hotspots, setHotspots] =
     useState([]);
@@ -607,6 +609,22 @@ function Analytics() {
                   <b>Dominant Crime:</b>{" "}
                   {item.dominantCrime}
                 </p>
+
+  <button
+  className="primary-button"
+  style={{ marginTop: "12px", width: "100%" }}
+  onClick={() => {
+    alert("Button clicked");
+
+    console.log("Clicked hotspot:", item);
+    console.log("Sending unitId:", item.unitId);
+    console.log("Sending unitCode:", item.unitCode);
+
+    onSelectUnit(item.unitId);
+  }}
+>
+  View Unit Details
+</button>
 
               </div>
 

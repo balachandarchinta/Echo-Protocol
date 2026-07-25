@@ -1,0 +1,294 @@
+/* =====================================================
+   ECHO PROTOCOL - AI PREDICTIVE CRIME INTELLIGENCE STYLES
+   (EXACT MATCH TO AI INVESTIGATION COPILOT HIERARCHY)
+   ===================================================== */
+
+/* FLOATING TRIGGER BUTTON */
+.predictive-trigger-btn {
+  position: fixed;
+  bottom: 144px;
+  right: 24px;
+  z-index: 997;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.predictive-trigger-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(2, 132, 199, 0.5);
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+}
+
+/* OVERLAY BACKDROP (EXACT MATCH TO .copilot-overlay) */
+.predictive-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* SLIDE-OUT DRAWER CONTAINER (EXACT MATCH TO .copilot-drawer) */
+.predictive-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 480px;
+  max-width: 92vw;
+  background: #0f172a;
+  color: #f8fafc;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  border-left: 1px solid #1e293b;
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* HEADER (EXACT MATCH TO .copilot-header) */
+.predictive-header {
+  padding: 18px 20px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.predictive-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.predictive-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(2, 132, 199, 0.2);
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.predictive-title-area h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #f8fafc;
+}
+
+.predictive-title-area p {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.predictive-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.predictive-close-btn:hover {
+  background: #334155;
+  color: #f8fafc;
+}
+
+/* FIXED PERIOD SELECTOR PROMPTS BAR AT TOP */
+.predictive-prompts-bar {
+  padding: 12px 16px;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.predictive-period-btn {
+  flex: 1;
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.predictive-period-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.predictive-period-btn:hover:not(.active) {
+  background: #334155;
+  color: #f8fafc;
+}
+
+/* CONTENT MESSAGES CONTAINER (EXACT MATCH TO .copilot-messages) */
+.predictive-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* RESULT CARDS & STYLING */
+.predictive-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.predictive-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.predictive-risk-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+}
+
+.predictive-risk-badge.low {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.predictive-district-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.predictive-district-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.predictive-progress-bg {
+  width: 100%;
+  height: 6px;
+  background: #334155;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.predictive-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease-out;
+}
+
+.predictive-trend-pill {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.predictive-trend-pill.Increasing {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.predictive-trend-pill.Stable {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+.predictive-trend-pill.Decreasing {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+.predictive-tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.predictive-tag {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
+.predictive-bullet-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.predictive-loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+  color: #38bdf8;
+  font-size: 0.85rem;
+}
+
+/* ANIMATIONS (EXACT MATCH TO AI INVESTIGATION COPILOT) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}

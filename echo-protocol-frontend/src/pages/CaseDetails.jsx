@@ -13,6 +13,12 @@ import {
 import {
   getCaseDetails,
 } from "../services/api";
+import {
+  getStatusClass,
+  getStatusTooltip,
+  getGravityClass,
+  getGravityTooltip,
+} from "../utils/badgeUtils";
 
 
 function DetailItem({
@@ -86,31 +92,6 @@ function CaseDetails({
     }
 
   }, [rowId]);
-
-
-  function getStatusClass(status) {
-
-    const normalized =
-      String(status || "")
-        .toLowerCase()
-        .replace(/\s+/g, "-");
-
-    return (
-      `case-badge status-${normalized}`
-    );
-  }
-
-
-  function getGravityClass(gravity) {
-
-    const normalized =
-      String(gravity || "")
-        .toLowerCase();
-
-    return (
-      `case-badge gravity-${normalized}`
-    );
-  }
 
 
   if (loading) {
@@ -212,21 +193,15 @@ function CaseDetails({
             </h1>
 
             <span
-              className={
-                getStatusClass(
-                  caseData.status
-                )
-              }
+              className={getStatusClass(caseData.status)}
+              title={getStatusTooltip(caseData.status)}
             >
               {caseData.status}
             </span>
 
             <span
-              className={
-                getGravityClass(
-                  caseData.gravity
-                )
-              }
+              className={getGravityClass(caseData.gravity)}
+              title={getGravityTooltip(caseData.gravity)}
             >
               {caseData.gravity}
             </span>

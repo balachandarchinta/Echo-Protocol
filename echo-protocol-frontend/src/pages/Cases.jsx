@@ -8,6 +8,12 @@ import {
 } from "lucide-react";
 
 import { getCases } from "../services/api";
+import {
+  getStatusClass,
+  getStatusTooltip,
+  getGravityClass,
+  getGravityTooltip,
+} from "../utils/badgeUtils";
 
 const PAGE_SIZE = 10;
 
@@ -196,23 +202,6 @@ function Cases({
     setGravityFilter("");
     setCrimeHeadFilter("");
     setCurrentPage(1);
-  }
-
-  function getStatusClass(status) {
-    const normalized =
-      String(status || "")
-        .toLowerCase()
-        .replace(/\s+/g, "-");
-
-    return `case-badge status-${normalized}`;
-  }
-
-  function getGravityClass(gravity) {
-    const normalized =
-      String(gravity || "")
-        .toLowerCase();
-
-    return `case-badge gravity-${normalized}`;
   }
 
   if (loading) {
@@ -527,6 +516,7 @@ function Cases({
         <td>
           <span
             className={getStatusClass(item.status)}
+            title={getStatusTooltip(item.status)}
           >
             {item.status}
           </span>
@@ -535,6 +525,7 @@ function Cases({
         <td>
           <span
             className={getGravityClass(item.gravity)}
+            title={getGravityTooltip(item.gravity)}
           >
             {item.gravity}
           </span>
