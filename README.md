@@ -289,7 +289,7 @@ Deployment includes:
 
 # Contributors
 
-**Bala Chandar Kumar Chinta**
+**Bala Chandar Kumar Chinta** & **Anjali Tripathi**
 
 Developed as part of the **Zoho Catalyst Hackathon**, demonstrating the use of cloud-native serverless architecture, AI-powered analytics, and modern web technologies to build an intelligent crime intelligence platform.
 
