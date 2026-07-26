@@ -67,43 +67,6 @@ Echo Protocol addresses these challenges by providing a centralized, intelligent
 - Import Status Monitoring
 
 ---
-
-## AI Intelligence
-
-Echo Protocol integrates **Zoho Catalyst QuickML** for intelligent crime severity prediction.
-
-### Machine Learning Model
-
-- Algorithm: Random Forest Classification
-- Platform: Zoho Catalyst QuickML
-- Target Variable: Gravity
-- Prediction Classes:
-  - Heinous
-  - Serious
-  - Petty
-
-### Features Used
-
-- District
-- Police Station
-- Crime Classification
-- Crime Head
-- Status
-
-### Model Evaluation
-
-| Metric | Score |
-|---------|------:|
-| Accuracy | 100% |
-| Precision | 100% |
-| Recall | 100% |
-| F1 Score | 100% |
-| AUC | 100% |
-
-> **Note:** The machine learning model has been trained and validated using Zoho Catalyst QuickML. Integration of live predictions into the application UI is planned for a future enhancement.
-
----
-
 # Technology Stack
 
 ## Frontend
@@ -132,6 +95,9 @@ Echo Protocol integrates **Zoho Catalyst QuickML** for intelligent crime severit
 - Zoho Catalyst Hosting
 - Catalyst CLI
 
+### Live Application
+
+https://echo-protocol-main-lmtblzgt.onslate.in
 ---
 
 # System Architecture
