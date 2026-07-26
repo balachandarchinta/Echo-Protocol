@@ -1,212 +1,329 @@
 # Echo Protocol Dashboard Design
 
-## Overview
-
-The Echo Protocol Dashboard provides an AI-powered Crime Intelligence Platform for the Karnataka State Police.
-
-The objective is to replace manual Excel-based reporting with real-time dashboards, geospatial intelligence, criminal relationship analysis, and predictive policing.
+# Crime Intelligence & AI Analytics Dashboard
 
 ---
 
-# Dashboard Modules
+# 1. Overview
+
+The Echo Protocol Dashboard provides an AI-powered Crime Intelligence platform for law enforcement agencies. It consolidates crime records, operational analytics, and machine learning insights into a unified interface built using React and Zoho Catalyst.
+
+The dashboard replaces manual Excel-based reporting with interactive visualizations, intelligent filtering, AI-assisted predictions, and centralized crime management.
+
+---
+
+# 2. Dashboard Modules
+
+Echo Protocol consists of the following primary modules:
 
 1. Executive Dashboard
-2. Crime Analytics
-3. District Intelligence
-4. Crime Hotspots
-5. Crime Network Analysis
-6. Repeat Offenders
-7. AI Prediction
-8. Reports
+2. Cases
+3. Analytics
+4. Smart Data Import
+5. AI Intelligence
+6. System Operational
+7. Reports
+8. Administration *(Future)*
 
 ---
 
-# 1. Executive Dashboard
+# 3. Executive Dashboard
 
 ## Purpose
 
-Provide a state-level overview of crime statistics.
+Provide an overall operational view of crime statistics and system performance.
 
-## KPIs
+### KPI Cards
 
-- Total FIRs
-- Active Cases
+- Total Registered Cases
+- Open Cases
 - Closed Cases
-- Arrests Made
 - Chargesheets Filed
-- Repeat Offenders
-- High Risk Districts
+- Active Police Stations
+- Districts Covered
 
-## Charts
+### Charts
 
 - Monthly Crime Trend
-- Crime Category Distribution
-- District-wise Crime Count
-- Top Police Stations
-- Top Crime Categories
+- Crime Classification Distribution
+- Gravity Distribution
+- District-wise Cases
+- Status Distribution
+
+### Quick Insights
+
+- Highest Crime District
+- Most Frequent Crime Head
+- Serious Crime Percentage
+- Recently Registered Cases
 
 ---
 
-# 2. Crime Analytics Dashboard
+# 4. Cases Module
 
 ## Purpose
 
-Analyze crime patterns across Karnataka.
+Manage and search registered crime records.
 
-## Features
+### Features
 
-- Crime Trend Analysis
-- Crime Type Distribution
-- Time-wise Crime Analysis
-- Day-wise Crime Analysis
-- Crime Growth
+- Search Crime Number
+- Search FIR Number
+- View Case Details
+- Advanced Filtering
+- Pagination
+- Crime Status Tracking
 
-## Filters
+### Filters
 
-- Date
 - District
 - Police Station
+- Crime Classification
 - Crime Head
-- Crime Sub Head
+- Gravity
+- Case Status
+- Date Range
 
 ---
 
-# 3. District Intelligence Dashboard
+# 5. Analytics Module
 
 ## Purpose
 
-Provide district-level crime analysis.
+Provide detailed analytical insights into crime data.
 
-## Features
+### Analytics
 
-- District Ranking
-- Police Station Ranking
-- District Drill Down
-- Crime Density
+- District-wise Crime Analysis
+- Police Station Analysis
+- Crime Head Distribution
+- Crime Classification Analysis
+- Gravity Analysis
+- Monthly Trends
+- Case Status Analysis
 
-## Drill Down
+### Interactive Features
 
-State
+- Drill-down Analytics
+- Dynamic Filters
+- Interactive Charts
+- Comparative Analysis
+
+---
+
+# 6. Smart Data Import
+
+## Purpose
+
+Import crime records from external sources.
+
+### Features
+
+- CSV Upload
+- Excel Upload
+- Automatic Validation
+- Duplicate Detection *(Future)*
+- Import Summary
+- Error Reporting
+
+### Workflow
+
+```
+Excel / CSV
 
 ↓
 
-District
+Validate Data
 
 ↓
 
-Police Station
+Preview Records
 
 ↓
 
-FIR
+Import to Data Store
+
+↓
+
+Dashboard Refresh
+```
 
 ---
 
-# 4. Crime Hotspot Dashboard
+# 7. AI Intelligence
 
 ## Purpose
 
-Identify crime hotspots.
+Provide machine learning and AI-powered decision support.
 
-## Features
+### Currently Implemented
 
-- Heat Map
-- Latitude / Longitude Mapping
-- Time of Day Analysis
-- High Risk Areas
+#### Crime Severity Prediction
+
+Predicts the gravity of a crime using Catalyst QuickML.
+
+Prediction Classes
+
+- Heinous
+- Serious
+- Petty
+
+### Model Information
+
+- Random Forest Classification
+- Feature Importance
+- Prediction Results
+- Model Evaluation
+
+### Planned AI Features
+
+- Crime Trend Forecasting
+- Crime Hotspot Prediction
+- Similar Case Recommendation
+- AI Investigation Assistant
+- Criminal Relationship Analysis
+- Explainable AI
 
 ---
 
-# 5. Crime Network Analysis
+# 8. System Operational
 
 ## Purpose
 
-Identify relationships between criminal entities.
+Monitor the health and performance of the Echo Protocol platform.
 
-## Features
+### Metrics
 
-- Repeat Offenders
-- Victim Connections
-- Criminal Associations
-- Linked FIRs
-- Common Crime Locations
+- Total API Requests
+- Server Status
+- Database Status
+- AI Model Status
+- Active Services
+- Import Status
+
+### Monitoring
+
+- Service Availability
+- Error Monitoring
+- Performance Metrics
+- Response Time
+- System Logs *(Future)*
 
 ---
 
-# 6. Repeat Offender Dashboard
+# 9. Reports
 
 ## Purpose
 
-Track repeat offenders across districts.
+Generate operational and analytical reports.
 
-## Metrics
+### Available Reports
 
-- Total Cases
-- Districts Involved
-- Police Stations Involved
-- Last Arrest
-- Crime Categories
-
----
-
-# 7. AI Prediction Dashboard
-
-## Purpose
-
-Predict emerging crime trends.
-
-## Features
-
-- Crime Forecast
-- Risk Score
-- Emerging Crime Alerts
-- Anomaly Detection
-
----
-
-# 8. Reports
-
-## Features
-
-- PDF Report
-- Excel Export
 - Crime Summary
-- Intelligence Report
+- District Report
+- Monthly Report
+- Analytics Report
+- AI Prediction Report
+
+### Export Formats
+
+- Excel
+- CSV
+- PDF *(Future)*
 
 ---
 
-# Global Filters
+# 10. Global Filters
 
-Every dashboard supports the following filters.
+All modules support consistent filtering.
+
+Available Filters
 
 - Date Range
 - District
 - Police Station
-- Crime Category
+- Crime Classification
 - Crime Head
-- Crime Sub Head
-- Investigating Officer
+- Gravity
 - Case Status
 
 ---
 
-# User Roles
+# 11. Dashboard Navigation
 
-- DGP
-- Commissioner
-- SP
-- Inspector
-- Police Station User
+```
+Dashboard
 
-Each role will see data based on their access level.
+├── Executive Dashboard
+
+├── Cases
+
+├── Analytics
+
+├── Smart Data Import
+
+├── AI Intelligence
+
+├── System Operational
+
+├── Reports
+
+└── Administration (Future)
+```
 
 ---
 
-# Future Enhancements
+# 12. User Roles
 
-- Facial Recognition
+The platform is designed to support role-based access in future releases.
+
+Planned Roles
+
+- DGP
+- Commissioner
+- Superintendent of Police (SP)
+- Deputy Superintendent (DSP)
+- Inspector
+- Police Station Officer
+- Investigation Officer
+
+Role-Based Access Control (RBAC) will be implemented using Catalyst Authentication.
+
+---
+
+# 13. Future Dashboard Enhancements
+
+The modular dashboard architecture supports future capabilities including:
+
+- Crime Hotspot Maps
+- GIS-Based Intelligence
+- Criminal Relationship Graphs
+- Repeat Offender Dashboard
 - Vehicle Intelligence
+- Facial Recognition Integration
 - CCTV Analytics
-- Gang Intelligence
-- Social Network Analysis
 - AI Investigation Assistant
+- Crime Forecast Dashboard
+- Resource Allocation Dashboard
+- Explainable AI Dashboard
+
+---
+
+# 14. Dashboard Design Principles
+
+The dashboard follows these design principles:
+
+- Clean and intuitive interface
+- Real-time operational insights
+- AI-assisted decision support
+- Responsive design
+- Modular architecture
+- Interactive visualizations
+- Drill-down analytics
+- Scalable component-based UI
+
+---
+
+# 15. Conclusion
+
+The Echo Protocol Dashboard serves as the central interface for crime intelligence, operational analytics, and AI-powered decision support. By combining interactive dashboards, Catalyst Data Store, and QuickML-based machine learning, it enables law enforcement agencies to monitor crime trends, manage investigations, and leverage predictive analytics through a unified, scalable platform.
